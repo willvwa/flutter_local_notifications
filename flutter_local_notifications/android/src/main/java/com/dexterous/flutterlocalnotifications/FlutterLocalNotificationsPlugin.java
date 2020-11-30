@@ -209,7 +209,11 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         setCategory(notificationDetails, builder);
         setTimeoutAfter(notificationDetails, builder);
 
-        builder.addAction(new NotificationCompat.Action(0, "TESTE", null));
+        Intent actionIntent = getLaunchIntent(context);
+        actionIntent.setAction(SELECT_NOTIFICATION);
+        actionIntent.putExtra(PAYLOAD, "teste-payload");
+        PendingIntent actionPendingIntent = PendingIntent.getActivity(context, notificationDetails.id, actionIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        builder.addAction(new NotificationCompat.Action(0, "TESTE ACTION", actionPendingIntent));
 
         Notification notification = builder.build();
         if (notificationDetails.additionalFlags != null && notificationDetails.additionalFlags.length > 0) {
