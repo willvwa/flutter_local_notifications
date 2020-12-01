@@ -12,4 +12,10 @@ class NotificationAction {
 
   /// Action Payload
   final String payload;
+
+  ///
+  Map<String, Object> toMap() => {
+    'label': label,
+    'payload': payload,
+  };
 }

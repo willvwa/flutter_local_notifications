@@ -229,6 +229,8 @@ public class NotificationDetails {
                         resultado += "{ payload: " + notificationAction.payload + ", label: " + notificationAction.label + " }";
                     }
                 }
+
+
                 Log.d("ResultadoParse", resultado);
 
             } catch (Exception e) {
