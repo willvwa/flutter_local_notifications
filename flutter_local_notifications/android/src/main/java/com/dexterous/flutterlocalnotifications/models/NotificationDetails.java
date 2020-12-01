@@ -206,7 +206,6 @@ public class NotificationDetails {
             notificationDetails.repeatInterval = RepeatInterval.values()[(Integer) arguments.get(REPEAT_INTERVAL)];
         }
         if (arguments.containsKey(REPEAT_TIME)) {
-            @SuppressWarnings("unchecked")
             Map<String, Object> repeatTimeParams = (Map<String, Object>) arguments.get(REPEAT_TIME);
             notificationDetails.repeatTime = Time.from(repeatTimeParams);
         }
@@ -215,7 +214,30 @@ public class NotificationDetails {
         }
         if (arguments.containsKey(ACTIONS)) {
 
-            Log.d("ANDROID RESULTADO", arguments.get(ACTIONS).toString());
+            try {
+
+                List<Map<String, Object>> listaInicial = (List<Map<String, Object>>) arguments.get(ACTIONS);
+
+                String resultado = "";
+
+                for (Map<String, Object> element :
+                        listaInicial) {
+
+                    NotificationAction notificationAction = NotificationAction.from(element);
+
+                    if (notificationAction != null) {
+                        resultado += "{ payload: " + notificationAction.payload + ", label: " + notificationAction.label + " }";
+                    }
+                }
+                Log.d("ResultadoParse", resultado);
+
+            } catch (Exception e) {
+                Log.d("ErroParse", e.getMessage());
+            } finally {
+                Log.d("ResultadoParse", "Parse realizado");
+            }
+
+
 
 //            List<Object> notParsedActions = (ArrayList<Object>) arguments.get(ACTIONS);
 //
