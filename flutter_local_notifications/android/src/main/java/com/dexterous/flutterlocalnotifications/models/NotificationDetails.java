@@ -3,6 +3,7 @@ package com.dexterous.flutterlocalnotifications.models;
 import android.graphics.Color;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
+import android.util.Log;
 
 import androidx.annotation.Keep;
 
@@ -214,7 +215,7 @@ public class NotificationDetails {
         }
         if (arguments.containsKey(ACTIONS)) {
 
-            System.out.println(arguments.get(ACTIONS).toString());
+            Log.d("ANDROID RESULTADO", arguments.get(ACTIONS).toString());
 
 //            List<Object> notParsedActions = (ArrayList<Object>) arguments.get(ACTIONS);
 //
