@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'bitmap.dart';
 import 'enums.dart';
+import 'notification_action.dart';
 import 'notification_sound.dart';
 import 'styles/style_information.dart';
 
@@ -48,6 +49,7 @@ class AndroidNotificationDetails {
     this.fullScreenIntent = false,
     this.shortcutId,
     this.additionalFlags,
+    this.actions,
   });
 
   /// The icon that should be used when displaying the notification.
@@ -243,4 +245,7 @@ class AndroidNotificationDetails {
   /// For a list of a values, refer to the documented constants prefixed with "FLAG_" (without the quotes) at https://developer.android.com/reference/android/app/Notification.html#constants_1.
   /// For example, use a value of 4 to allow the audio to repeat as documented at https://developer.android.com/reference/android/app/Notification.html#FLAG_INSISTEN
   final Int32List additionalFlags;
+
+  /// List of Actions to Android Notification
+  final List<NotificationAction> actions;
 }

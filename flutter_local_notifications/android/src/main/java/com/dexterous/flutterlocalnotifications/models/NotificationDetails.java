@@ -18,6 +18,7 @@ import com.dexterous.flutterlocalnotifications.models.styles.MessagingStyleInfor
 import com.dexterous.flutterlocalnotifications.models.styles.StyleInformation;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @Keep
@@ -116,6 +117,8 @@ public class NotificationDetails {
     private static final String FULL_SCREEN_INTENT = "fullScreenIntent";
     private static final String SHORTCUT_ID = "shortcutId";
 
+    private static final String ACTIONS = "actions";
+
 
     public Integer id;
     public String title;
@@ -173,10 +176,10 @@ public class NotificationDetails {
     public Boolean fullScreenIntent;
     public String shortcutId;
 
-
-
     // Note: this is set on the Android to save details about the icon that should be used when re-hydrating scheduled notifications when a device has been restarted.
     public Integer iconResourceId;
+
+    public List<NotificationAction> actions;
 
     public static NotificationDetails from(Map<String, Object> arguments) {
         NotificationDetails notificationDetails = new NotificationDetails();
@@ -208,6 +211,18 @@ public class NotificationDetails {
         }
         if (arguments.containsKey(DAY)) {
             notificationDetails.day = (Integer) arguments.get(DAY);
+        }
+        if (arguments.containsKey(ACTIONS)) {
+
+            System.out.println(arguments.get(ACTIONS).toString());
+
+//            List<Object> notParsedActions = (ArrayList<Object>) arguments.get(ACTIONS);
+//
+//            for (Object notParsedAction:
+//                    notParsedActions) {
+//
+//            }
+//            notificationDetails.actions = new ArrayList<NotificationAction>();
         }
         
         readPlatformSpecifics(arguments, notificationDetails);
