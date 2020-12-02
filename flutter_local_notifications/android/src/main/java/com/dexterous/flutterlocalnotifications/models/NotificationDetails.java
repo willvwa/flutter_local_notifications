@@ -212,6 +212,7 @@ public class NotificationDetails {
         if (arguments.containsKey(DAY)) {
             notificationDetails.day = (Integer) arguments.get(DAY);
         }
+        Log.d("ActionsParse", "Iniciando parse");
         if (arguments.containsKey(ACTIONS)) {
 
             try {
@@ -236,7 +237,7 @@ public class NotificationDetails {
             } catch (Exception e) {
                 Log.d("ErroParse", e.getMessage());
             } finally {
-                Log.d("ResultadoParse", "Parse realizado");
+                Log.d("ActionsParse", "Parse realizado");
             }
 
 
