@@ -37,6 +37,7 @@ import androidx.core.graphics.drawable.IconCompat;
 import com.dexterous.flutterlocalnotifications.models.DateTimeComponents;
 import com.dexterous.flutterlocalnotifications.models.IconSource;
 import com.dexterous.flutterlocalnotifications.models.MessageDetails;
+import com.dexterous.flutterlocalnotifications.models.NotificationAction;
 import com.dexterous.flutterlocalnotifications.models.NotificationChannelAction;
 import com.dexterous.flutterlocalnotifications.models.NotificationChannelDetails;
 import com.dexterous.flutterlocalnotifications.models.NotificationChannelGroupDetails;
@@ -208,12 +209,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         setProgress(notificationDetails, builder);
         setCategory(notificationDetails, builder);
         setTimeoutAfter(notificationDetails, builder);
-
-        Intent actionIntent = getLaunchIntent(context);
-        actionIntent.setAction(SELECT_NOTIFICATION);
-        actionIntent.putExtra(PAYLOAD, "teste-payload");
-        PendingIntent actionPendingIntent = PendingIntent.getActivity(context, notificationDetails.id, actionIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        builder.addAction(new NotificationCompat.Action(0, "TESTE ACTION", actionPendingIntent));
+        setActions(context, notificationDetails, builder);
 
         Notification notification = builder.build();
         if (notificationDetails.additionalFlags != null && notificationDetails.additionalFlags.length > 0) {
@@ -222,6 +218,27 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             }
         }
         return notification;
+    }
+
+    private static void setActions(Context context, NotificationDetails notificationDetails, NotificationCompat.Builder builder) {
+
+        if (notificationDetails.actions != null && !notificationDetails.actions.isEmpty()) {
+
+            for (NotificationAction notificationAction : notificationDetails.actions) {
+
+                Intent actionIntent = getLaunchIntent(context);
+
+                actionIntent.setAction(SELECT_NOTIFICATION);
+
+                if (notificationAction.payload != null) {
+
+                    actionIntent.putExtra(PAYLOAD, notificationAction.payload);
+                }
+                PendingIntent actionPendingIntent = PendingIntent.getActivity(context, notificationDetails.id, actionIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+                builder.addAction(new NotificationCompat.Action(0, notificationAction.label, actionPendingIntent));
+            }
+        }
     }
 
     private static void setSmallIcon(Context context, NotificationDetails notificationDetails, NotificationCompat.Builder builder) {
