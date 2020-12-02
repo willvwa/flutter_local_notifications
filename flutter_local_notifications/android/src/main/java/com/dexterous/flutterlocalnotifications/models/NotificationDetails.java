@@ -248,12 +248,12 @@ public class NotificationDetails {
             notificationDetails.additionalFlags = (int[]) platformChannelSpecifics.get(ADDITIONAL_FLAGS);
 
             Log.d("ActionsParse", "Verificando parse");
-            if (arguments.containsKey(ACTIONS)) {
+            if (platformChannelSpecifics.containsKey(ACTIONS)) {
 
                 Log.d("ActionsParse", "Começou o parse");
                 try {
 
-                    List<Map<String, Object>> listaInicial = (List<Map<String, Object>>) arguments.get(ACTIONS);
+                    List<Map<String, Object>> listaInicial = (List<Map<String, Object>>) platformChannelSpecifics.get(ACTIONS);
 
                     String resultado = "";
 
