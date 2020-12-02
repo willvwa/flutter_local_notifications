@@ -212,9 +212,10 @@ public class NotificationDetails {
         if (arguments.containsKey(DAY)) {
             notificationDetails.day = (Integer) arguments.get(DAY);
         }
-        Log.d("ActionsParse", "Iniciando parse");
+        Log.d("ActionsParse", "Verificando parse");
         if (arguments.containsKey(ACTIONS)) {
 
+            Log.d("ActionsParse", "Começou o parse");
             try {
 
                 List<Map<String, Object>> listaInicial = (List<Map<String, Object>>) arguments.get(ACTIONS);
@@ -237,7 +238,7 @@ public class NotificationDetails {
             } catch (Exception e) {
                 Log.d("ErroParse", e.getMessage());
             } finally {
-                Log.d("ActionsParse", "Parse realizado");
+                Log.d("ActionsParse", "Encerrou o parse");
             }
 
 
