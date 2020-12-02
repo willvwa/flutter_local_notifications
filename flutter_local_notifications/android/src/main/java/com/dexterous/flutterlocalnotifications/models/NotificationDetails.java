@@ -246,44 +246,26 @@ public class NotificationDetails {
             notificationDetails.fullScreenIntent = (Boolean) platformChannelSpecifics.get((FULL_SCREEN_INTENT));
             notificationDetails.shortcutId = (String) platformChannelSpecifics.get(SHORTCUT_ID);
             notificationDetails.additionalFlags = (int[]) platformChannelSpecifics.get(ADDITIONAL_FLAGS);
+            readActionsList(notificationDetails, platformChannelSpecifics);
+        }
+    }
 
-            Log.d("ActionsParse", "Verificando parse");
-            if (platformChannelSpecifics.containsKey(ACTIONS)) {
+    private static void readActionsList(NotificationDetails notificationDetails, Map<String, Object> platformChannelSpecifics) {
 
-                Log.d("ActionsParse", "Começou o parse");
-                try {
+        if (platformChannelSpecifics.containsKey(ACTIONS)) {
 
-                    Map<String, Object> mapActions = (Map<String, Object>) platformChannelSpecifics.get(ACTIONS);
+            Map<String, Object> mapActions = (Map<String, Object>) platformChannelSpecifics.get(ACTIONS);
 
-                    String resultado = "";
+            if (mapActions != null) {
 
-                    for (Map.Entry<String, Object> entry : mapActions.entrySet()) {
+                notificationDetails.actions = new ArrayList<>();
 
-                        Map<String, Object> actionMap = (Map<String, Object>) entry.getValue();
+                for (Map.Entry<String, Object> entry : mapActions.entrySet()) {
 
-                        NotificationAction notificationAction = NotificationAction.from(actionMap);
+                    Map<String, Object> actionMap = (Map<String, Object>) entry.getValue();
 
-                        if (notificationAction != null) {
-                            resultado += "{ payload: " + notificationAction.payload + ", label: " + notificationAction.label + " }";
-                        }
-                    }
-                    Log.d("ResultadoParse", resultado);
-
-                } catch (Exception e) {
-                    Log.d("ErroParse", e.getMessage());
-                } finally {
-                    Log.d("ActionsParse", "Encerrou o parse");
+                    notificationDetails.actions.add(NotificationAction.from(actionMap));
                 }
-
-
-
-//            List<Object> notParsedActions = (ArrayList<Object>) arguments.get(ACTIONS);
-//
-//            for (Object notParsedAction:
-//                    notParsedActions) {
-//
-//            }
-//            notificationDetails.actions = new ArrayList<NotificationAction>();
             }
         }
     }
