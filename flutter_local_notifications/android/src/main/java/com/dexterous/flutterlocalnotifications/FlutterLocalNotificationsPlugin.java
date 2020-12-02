@@ -234,7 +234,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
                     actionIntent.putExtra(PAYLOAD, notificationAction.payload);
                 }
-                PendingIntent actionPendingIntent = PendingIntent.getActivity(context, notificationDetails.id, actionIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent actionPendingIntent = PendingIntent.getActivity(context, notificationDetails.id, actionIntent, PendingIntent.FLAG_ONE_SHOT);
 
                 builder.addAction(new NotificationCompat.Action(0, notificationAction.label, actionPendingIntent));
             }
