@@ -1,9 +1,8 @@
 /// Android Notification Action
 class NotificationAction {
-
   /// Android Notification Action
-  NotificationAction({
-    this.label,
+  NotificationAction(
+    this.label, {
     this.payload,
   });
 
@@ -13,9 +12,9 @@ class NotificationAction {
   /// Action Payload
   final String payload;
 
-  ///
+  /// Convert action to Map
   Map<String, Object> toMap() => {
-    'label': label,
-    'payload': payload,
-  };
+        'label': label,
+        'payload': payload,
+      };
 }
