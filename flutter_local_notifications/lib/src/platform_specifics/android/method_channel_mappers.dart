@@ -247,7 +247,7 @@ extension AndroidNotificationDetailsMapper on AndroidNotificationDetails {
         'fullScreenIntent': fullScreenIntent,
         'shortcutId': shortcutId,
         'additionalFlags': additionalFlags,
-        'actions': { for (var e in actions) actions.indexOf(e).toString() : e.toMap().toString() },
+        'actions': { for (var e in actions) actions.indexOf(e).toString() : e.toMap() },
       }
         ..addAll(_convertStyleInformationToMap())
         ..addAll(_convertNotificationSoundToMap(sound))
