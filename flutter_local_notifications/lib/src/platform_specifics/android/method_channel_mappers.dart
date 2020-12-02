@@ -247,8 +247,8 @@ extension AndroidNotificationDetailsMapper on AndroidNotificationDetails {
         'fullScreenIntent': fullScreenIntent,
         'shortcutId': shortcutId,
         'additionalFlags': additionalFlags,
+        'actions': _convertActionsListToMap(),
       }
-        ..addAll(_convertActionsListToMap())
         ..addAll(_convertStyleInformationToMap())
         ..addAll(_convertNotificationSoundToMap(sound))
         ..addAll(_convertLargeIconToMap());
@@ -311,11 +311,9 @@ extension AndroidNotificationDetailsMapper on AndroidNotificationDetails {
   Map<String, Object> _convertActionsListToMap() {
     if (actions != null && actions.isNotEmpty) {
       return <String, Object>{
-        'actions': <String, Object>{
-          for (NotificationAction e in actions) actions.indexOf(e).toString(): e.toMap()
-        }
+        for (NotificationAction e in actions) actions.indexOf(e).toString() : e.toMap()
       };
     }
-    return <String, Object>{};
+    return null;
   }
 }
