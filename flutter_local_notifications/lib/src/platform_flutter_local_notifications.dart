@@ -207,7 +207,6 @@ class AndroidFlutterLocalNotificationsPlugin
     String payload,
   }) {
     validateId(id);
-    print(notificationDetails?.toMap());
     return _channel.invokeMethod(
       'show',
       <String, Object>{
