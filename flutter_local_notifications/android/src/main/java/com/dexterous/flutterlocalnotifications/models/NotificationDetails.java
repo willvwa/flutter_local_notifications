@@ -253,21 +253,20 @@ public class NotificationDetails {
                 Log.d("ActionsParse", "Começou o parse");
                 try {
 
-                    List<Map<String, Object>> listaInicial = (List<Map<String, Object>>) platformChannelSpecifics.get(ACTIONS);
+                    Map<String, Object> mapActions = (Map<String, Object>) platformChannelSpecifics.get(ACTIONS);
 
                     String resultado = "";
 
-                    for (Map<String, Object> element :
-                            listaInicial) {
+                    for (Map.Entry<String, Object> entry : mapActions.entrySet()) {
 
-                        NotificationAction notificationAction = NotificationAction.from(element);
+                        Map<String, Object> actionMap = (Map<String, Object>) entry.getValue();
+
+                        NotificationAction notificationAction = NotificationAction.from(actionMap);
 
                         if (notificationAction != null) {
                             resultado += "{ payload: " + notificationAction.payload + ", label: " + notificationAction.label + " }";
                         }
                     }
-
-
                     Log.d("ResultadoParse", resultado);
 
                 } catch (Exception e) {
