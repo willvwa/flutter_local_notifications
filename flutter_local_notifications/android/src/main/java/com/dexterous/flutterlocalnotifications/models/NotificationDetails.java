@@ -268,6 +268,11 @@ public class NotificationDetails {
                 }
             }
         }
+        if (notificationDetails.actions != null && !notificationDetails.actions.isEmpty()) {
+            for (NotificationAction action : notificationDetails.actions) {
+                Log.d("NotificationAction", action.label + " " + action.payload);
+            }
+        }
     }
 
     private static Long parseLong(Object object) {
