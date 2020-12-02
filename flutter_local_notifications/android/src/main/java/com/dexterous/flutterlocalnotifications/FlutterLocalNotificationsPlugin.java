@@ -224,6 +224,8 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
         if (notificationDetails.actions != null && !notificationDetails.actions.isEmpty()) {
 
+            int index = 0;
+
             for (NotificationAction notificationAction : notificationDetails.actions) {
 
                 Intent actionIntent = getLaunchIntent(context);
@@ -234,9 +236,11 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
                     actionIntent.putExtra(PAYLOAD, notificationAction.payload);
                 }
-                PendingIntent actionPendingIntent = PendingIntent.getActivity(context, notificationDetails.id, actionIntent, PendingIntent.FLAG_ONE_SHOT);
+                PendingIntent actionPendingIntent = PendingIntent.getActivity(context, index, actionIntent, PendingIntent.FLAG_ONE_SHOT);
 
                 builder.addAction(new NotificationCompat.Action(0, notificationAction.label, actionPendingIntent));
+
+                index++;
             }
         }
     }
