@@ -212,46 +212,6 @@ public class NotificationDetails {
         if (arguments.containsKey(DAY)) {
             notificationDetails.day = (Integer) arguments.get(DAY);
         }
-        Log.d("ActionsParse", "Verificando parse");
-        if (arguments.containsKey(ACTIONS)) {
-
-            Log.d("ActionsParse", "Começou o parse");
-            try {
-
-                List<Map<String, Object>> listaInicial = (List<Map<String, Object>>) arguments.get(ACTIONS);
-
-                String resultado = "";
-
-                for (Map<String, Object> element :
-                        listaInicial) {
-
-                    NotificationAction notificationAction = NotificationAction.from(element);
-
-                    if (notificationAction != null) {
-                        resultado += "{ payload: " + notificationAction.payload + ", label: " + notificationAction.label + " }";
-                    }
-                }
-
-
-                Log.d("ResultadoParse", resultado);
-
-            } catch (Exception e) {
-                Log.d("ErroParse", e.getMessage());
-            } finally {
-                Log.d("ActionsParse", "Encerrou o parse");
-            }
-
-
-
-//            List<Object> notParsedActions = (ArrayList<Object>) arguments.get(ACTIONS);
-//
-//            for (Object notParsedAction:
-//                    notParsedActions) {
-//
-//            }
-//            notificationDetails.actions = new ArrayList<NotificationAction>();
-        }
-        
         readPlatformSpecifics(arguments, notificationDetails);
         return notificationDetails;
     }
@@ -286,6 +246,46 @@ public class NotificationDetails {
             notificationDetails.fullScreenIntent = (Boolean) platformChannelSpecifics.get((FULL_SCREEN_INTENT));
             notificationDetails.shortcutId = (String) platformChannelSpecifics.get(SHORTCUT_ID);
             notificationDetails.additionalFlags = (int[]) platformChannelSpecifics.get(ADDITIONAL_FLAGS);
+
+            Log.d("ActionsParse", "Verificando parse");
+            if (arguments.containsKey(ACTIONS)) {
+
+                Log.d("ActionsParse", "Começou o parse");
+                try {
+
+                    List<Map<String, Object>> listaInicial = (List<Map<String, Object>>) arguments.get(ACTIONS);
+
+                    String resultado = "";
+
+                    for (Map<String, Object> element :
+                            listaInicial) {
+
+                        NotificationAction notificationAction = NotificationAction.from(element);
+
+                        if (notificationAction != null) {
+                            resultado += "{ payload: " + notificationAction.payload + ", label: " + notificationAction.label + " }";
+                        }
+                    }
+
+
+                    Log.d("ResultadoParse", resultado);
+
+                } catch (Exception e) {
+                    Log.d("ErroParse", e.getMessage());
+                } finally {
+                    Log.d("ActionsParse", "Encerrou o parse");
+                }
+
+
+
+//            List<Object> notParsedActions = (ArrayList<Object>) arguments.get(ACTIONS);
+//
+//            for (Object notParsedAction:
+//                    notParsedActions) {
+//
+//            }
+//            notificationDetails.actions = new ArrayList<NotificationAction>();
+            }
         }
     }
 
