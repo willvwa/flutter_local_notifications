@@ -132,15 +132,16 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private Activity mainActivity;
     private Intent launchIntent;
 
-    private static FlutterLocalNotificationsPlugin instance;
-
-    public static FlutterLocalNotificationsPlugin getInstance() {
-        if (instance == null) instance = new FlutterLocalNotificationsPlugin();
-        return instance;
-    }
+//    private static FlutterLocalNotificationsPlugin instance;
+//
+//    public static FlutterLocalNotificationsPlugin getInstance() {
+//        if (instance == null) instance = new FlutterLocalNotificationsPlugin();
+//        return instance;
+//    }
 
     public static void registerWith(Registrar registrar) {
-        FlutterLocalNotificationsPlugin plugin = FlutterLocalNotificationsPlugin.getInstance();
+//        FlutterLocalNotificationsPlugin plugin = FlutterLocalNotificationsPlugin.getInstance();
+        FlutterLocalNotificationsPlugin plugin = new FlutterLocalNotificationsPlugin();
         plugin.setActivity(registrar.activity());
         registrar.addNewIntentListener(plugin);
         plugin.onAttachedToEngine(registrar.context(), registrar.messenger());
@@ -243,7 +244,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
                 if (notificationAction.backgroundAction) {
 
-                    actionIntent = new Intent(context, CustomActionReceiver.class);
+                    actionIntent = new Intent(CUSTOM_ACTION_INTENT);
 
                     actionIntent.setAction(CUSTOM_ACTION_INTENT);
 
@@ -1206,7 +1207,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     }
 
     private Boolean sendNotificationPayloadMessage(Intent intent) {
-        if (SELECT_NOTIFICATION.equals(intent.getAction())) {
+        if (SELECT_NOTIFICATION.equals(intent.getAction()) || CUSTOM_ACTION_INTENT.equals(intent.getAction())) {
             String payload = intent.getStringExtra(PAYLOAD);
             channel.invokeMethod("selectNotification", payload);
             return true;
