@@ -132,10 +132,15 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private Activity mainActivity;
     private Intent launchIntent;
 
-    public static MethodChannel channelInstance;
+    private static FlutterLocalNotificationsPlugin instance;
+
+    public static FlutterLocalNotificationsPlugin getInstance() {
+        if (instance == null) instance = new FlutterLocalNotificationsPlugin();
+        return instance;
+    }
 
     public static void registerWith(Registrar registrar) {
-        FlutterLocalNotificationsPlugin plugin = new FlutterLocalNotificationsPlugin();
+        FlutterLocalNotificationsPlugin plugin = FlutterLocalNotificationsPlugin.getInstance();
         plugin.setActivity(registrar.activity());
         registrar.addNewIntentListener(plugin);
         plugin.onAttachedToEngine(registrar.context(), registrar.messenger());
@@ -919,7 +924,6 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         this.applicationContext = context;
         this.channel = new MethodChannel(binaryMessenger, METHOD_CHANNEL);
         this.channel.setMethodCallHandler(this);
-        channelInstance = this.channel;
     }
 
     @Override

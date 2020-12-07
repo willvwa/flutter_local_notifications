@@ -14,6 +14,7 @@ public class CustomActionReceiver extends BroadcastReceiver {
 
         Log.d("RECEIVER", "RECEBIDO");
         String payload = intent.getStringExtra(PAYLOAD);
-        FlutterLocalNotificationsPlugin.channelInstance.invokeMethod("selectNotification", payload);
+        
+        FlutterLocalNotificationsPlugin.getInstance().channel.invokeMethod("selectNotification", payload);
     }
 }
