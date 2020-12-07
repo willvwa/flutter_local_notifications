@@ -127,16 +127,19 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private static final String NOTIFICATION_ID = "notificationId";
     static String NOTIFICATION_DETAILS = "notificationDetails";
     static Gson gson;
-    private MethodChannel channel;
+    public MethodChannel channel;
     private Context applicationContext;
     private Activity mainActivity;
     private Intent launchIntent;
+
+    public static FlutterLocalNotificationsPlugin instance;
 
     public static void registerWith(Registrar registrar) {
         FlutterLocalNotificationsPlugin plugin = new FlutterLocalNotificationsPlugin();
         plugin.setActivity(registrar.activity());
         registrar.addNewIntentListener(plugin);
         plugin.onAttachedToEngine(registrar.context(), registrar.messenger());
+        instance = plugin;
     }
 
     static void rescheduleNotifications(Context context) {
@@ -236,11 +239,9 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
                 if (notificationAction.backgroundAction) {
 
-                    actionIntent = new Intent(SELECT_NOTIFICATION);
+                    actionIntent = new Intent(context, CustomActionReceiver.class);
 
-//                    actionIntent = new Intent(context, CustomActionReceiver.class);
-//
-//                    actionIntent.setAction(CUSTOM_ACTION_INTENT);
+                    actionIntent.setAction(CUSTOM_ACTION_INTENT);
 
                     if (notificationAction.payload != null) {
 
@@ -248,8 +249,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
                         actionIntent.putExtra(PAYLOAD, notificationAction.payload);
                     }
-                    actionPendingIntent = PendingIntent.getActivity(context, index, actionIntent, PendingIntent.FLAG_ONE_SHOT);
-//                    actionPendingIntent = PendingIntent.getBroadcast(context, index, actionIntent, PendingIntent.FLAG_ONE_SHOT);
+                    actionPendingIntent = PendingIntent.getBroadcast(context, index, actionIntent, PendingIntent.FLAG_ONE_SHOT);
 
                 } else {
 
@@ -1202,12 +1202,16 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     }
 
     private Boolean sendNotificationPayloadMessage(Intent intent) {
-        if (SELECT_NOTIFICATION.equals(intent.getAction()) || CUSTOM_ACTION_INTENT.equals(intent.getAction())) {
+        if (SELECT_NOTIFICATION.equals(intent.getAction())) {
             String payload = intent.getStringExtra(PAYLOAD);
             channel.invokeMethod("selectNotification", payload);
             return true;
         }
         return false;
+    }
+
+    public void sendPayloadToFlutter(String payload) {
+        channel.invokeMethod("selectNotification", payload);
     }
 
     private void createNotificationChannelGroup(MethodCall call, Result result) {

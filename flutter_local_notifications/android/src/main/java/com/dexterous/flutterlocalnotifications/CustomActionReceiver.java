@@ -13,7 +13,8 @@ public class CustomActionReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
 
         Log.d("RECEIVER", "RECEBIDO");
-//        String payload = intent.getStringExtra(PAYLOAD);
+        String payload = intent.getStringExtra(PAYLOAD);
 
+        FlutterLocalNotificationsPlugin.instance.sendPayloadToFlutter(payload);
     }
 }
