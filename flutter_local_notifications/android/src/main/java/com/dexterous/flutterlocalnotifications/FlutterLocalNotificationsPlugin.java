@@ -93,6 +93,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private static final String DRAWABLE = "drawable";
     private static final String DEFAULT_ICON = "defaultIcon";
     private static final String SELECT_NOTIFICATION = "SELECT_NOTIFICATION";
+    private static final String CUSTOM_ACTION_INTENT = "CUSTOM_ACTION_INTENT";
     private static final String SCHEDULED_NOTIFICATIONS = "scheduled_notifications";
     private static final String INITIALIZE_METHOD = "initialize";
     private static final String CREATE_NOTIFICATION_CHANNEL_GROUP_METHOD = "createNotificationChannelGroup";
@@ -123,6 +124,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private static final String NOTIFICATION_LAUNCHED_APP = "notificationLaunchedApp";
     private static final String INVALID_DRAWABLE_RESOURCE_ERROR_MESSAGE = "The resource %s could not be found. Please make sure it has been added as a drawable resource to your Android head project.";
     private static final String INVALID_RAW_RESOURCE_ERROR_MESSAGE = "The resource %s could not be found. Please make sure it has been added as a raw resource to your Android head project.";
+    private static final String NOTIFICATION_ID = "notificationId";
     static String NOTIFICATION_DETAILS = "notificationDetails";
     static Gson gson;
     private MethodChannel channel;
@@ -228,16 +230,32 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
             for (NotificationAction notificationAction : notificationDetails.actions) {
 
-                Intent actionIntent = getLaunchIntent(context);
+                Intent actionIntent;
 
-                actionIntent.setAction(SELECT_NOTIFICATION);
+                PendingIntent actionPendingIntent;
 
+                if (notificationAction.backgroundAction) {
+
+                    actionIntent = new Intent();
+
+                    actionIntent.setAction(CUSTOM_ACTION_INTENT);
+
+                    actionPendingIntent = PendingIntent.getBroadcast(context, index, actionIntent, PendingIntent.FLAG_ONE_SHOT);
+
+                } else {
+
+                    actionIntent = getLaunchIntent(context);
+
+                    actionIntent.setAction(SELECT_NOTIFICATION);
+
+                    actionPendingIntent = PendingIntent.getActivity(context, index, actionIntent, PendingIntent.FLAG_ONE_SHOT);
+                }
                 if (notificationAction.payload != null) {
+
+                    actionIntent.putExtra(NOTIFICATION_ID, notificationDetails.id);
 
                     actionIntent.putExtra(PAYLOAD, notificationAction.payload);
                 }
-                PendingIntent actionPendingIntent = PendingIntent.getActivity(context, index, actionIntent, PendingIntent.FLAG_ONE_SHOT);
-
                 builder.addAction(new NotificationCompat.Action(0, notificationAction.label, actionPendingIntent));
 
                 index++;
