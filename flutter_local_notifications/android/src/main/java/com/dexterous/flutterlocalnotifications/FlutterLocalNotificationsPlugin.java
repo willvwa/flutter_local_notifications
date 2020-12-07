@@ -132,14 +132,13 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private Activity mainActivity;
     private Intent launchIntent;
 
-    public static FlutterLocalNotificationsPlugin instance;
+    public static MethodChannel channelInstance;
 
     public static void registerWith(Registrar registrar) {
         FlutterLocalNotificationsPlugin plugin = new FlutterLocalNotificationsPlugin();
         plugin.setActivity(registrar.activity());
         registrar.addNewIntentListener(plugin);
         plugin.onAttachedToEngine(registrar.context(), registrar.messenger());
-        instance = plugin;
     }
 
     static void rescheduleNotifications(Context context) {
@@ -920,6 +919,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         this.applicationContext = context;
         this.channel = new MethodChannel(binaryMessenger, METHOD_CHANNEL);
         this.channel.setMethodCallHandler(this);
+        channelInstance = this.channel;
     }
 
     @Override
@@ -1208,10 +1208,6 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             return true;
         }
         return false;
-    }
-
-    public void sendPayloadToFlutter(String payload) {
-        channel.invokeMethod("selectNotification", payload);
     }
 
     private void createNotificationChannelGroup(MethodCall call, Result result) {
