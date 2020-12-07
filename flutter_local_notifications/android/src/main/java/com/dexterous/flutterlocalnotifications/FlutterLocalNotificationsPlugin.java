@@ -240,6 +240,12 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
                     actionIntent.setAction(CUSTOM_ACTION_INTENT);
 
+                    if (notificationAction.payload != null) {
+
+                        actionIntent.putExtra(NOTIFICATION_ID, notificationDetails.id);
+
+                        actionIntent.putExtra(PAYLOAD, notificationAction.payload);
+                    }
                     actionPendingIntent = PendingIntent.getBroadcast(context, index, actionIntent, PendingIntent.FLAG_ONE_SHOT);
 
                 } else {
@@ -248,13 +254,13 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
                     actionIntent.setAction(SELECT_NOTIFICATION);
 
+                    if (notificationAction.payload != null) {
+
+                        actionIntent.putExtra(NOTIFICATION_ID, notificationDetails.id);
+
+                        actionIntent.putExtra(PAYLOAD, notificationAction.payload);
+                    }
                     actionPendingIntent = PendingIntent.getActivity(context, index, actionIntent, PendingIntent.FLAG_ONE_SHOT);
-                }
-                if (notificationAction.payload != null) {
-
-                    actionIntent.putExtra(NOTIFICATION_ID, notificationDetails.id);
-
-                    actionIntent.putExtra(PAYLOAD, notificationAction.payload);
                 }
                 builder.addAction(new NotificationCompat.Action(0, notificationAction.label, actionPendingIntent));
 
