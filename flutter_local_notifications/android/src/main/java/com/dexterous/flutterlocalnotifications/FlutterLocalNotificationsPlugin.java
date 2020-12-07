@@ -7,6 +7,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationChannelGroup;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -25,6 +26,7 @@ import android.service.notification.StatusBarNotification;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.util.Log;
 
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
@@ -88,7 +90,7 @@ import io.flutter.view.FlutterMain;
  * FlutterLocalNotificationsPlugin
  */
 @Keep
-public class FlutterLocalNotificationsPlugin implements MethodCallHandler, PluginRegistry.NewIntentListener, FlutterPlugin, ActivityAware {
+public class FlutterLocalNotificationsPlugin extends BroadcastReceiver implements MethodCallHandler, PluginRegistry.NewIntentListener, FlutterPlugin, ActivityAware {
     private static final String SHARED_PREFERENCES_KEY = "notification_plugin_cache";
     private static final String DRAWABLE = "drawable";
     private static final String DEFAULT_ICON = "defaultIcon";
@@ -132,19 +134,20 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private Activity mainActivity;
     private Intent launchIntent;
 
-//    private static FlutterLocalNotificationsPlugin instance;
-//
-//    public static FlutterLocalNotificationsPlugin getInstance() {
-//        if (instance == null) instance = new FlutterLocalNotificationsPlugin();
-//        return instance;
-//    }
 
     public static void registerWith(Registrar registrar) {
-//        FlutterLocalNotificationsPlugin plugin = FlutterLocalNotificationsPlugin.getInstance();
         FlutterLocalNotificationsPlugin plugin = new FlutterLocalNotificationsPlugin();
         plugin.setActivity(registrar.activity());
         registrar.addNewIntentListener(plugin);
         plugin.onAttachedToEngine(registrar.context(), registrar.messenger());
+    }
+
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        Log.d("RECEIVER", "ENVIANDO");
+        String payload = intent.getAction();
+        channel.invokeMethod("selectNotification", payload);
+        Log.d("RECEIVER", "ENVIADO");
     }
 
     static void rescheduleNotifications(Context context) {
@@ -244,7 +247,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
                 if (notificationAction.backgroundAction) {
 
-                    actionIntent = new Intent(CUSTOM_ACTION_INTENT);
+                    actionIntent = new Intent(context, FlutterLocalNotificationsPlugin.class);
 
                     actionIntent.setAction(CUSTOM_ACTION_INTENT);
 
@@ -1207,7 +1210,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     }
 
     private Boolean sendNotificationPayloadMessage(Intent intent) {
-        if (SELECT_NOTIFICATION.equals(intent.getAction()) || CUSTOM_ACTION_INTENT.equals(intent.getAction())) {
+        if (SELECT_NOTIFICATION.equals(intent.getAction())) {
             String payload = intent.getStringExtra(PAYLOAD);
             channel.invokeMethod("selectNotification", payload);
             return true;
