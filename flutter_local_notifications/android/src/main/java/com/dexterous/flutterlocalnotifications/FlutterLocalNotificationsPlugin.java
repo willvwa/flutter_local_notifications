@@ -90,7 +90,7 @@ import io.flutter.view.FlutterMain;
  * FlutterLocalNotificationsPlugin
  */
 @Keep
-public class FlutterLocalNotificationsPlugin extends BroadcastReceiver implements MethodCallHandler, PluginRegistry.NewIntentListener, FlutterPlugin, ActivityAware {
+public class FlutterLocalNotificationsPlugin implements MethodCallHandler, PluginRegistry.NewIntentListener, FlutterPlugin, ActivityAware {
     private static final String SHARED_PREFERENCES_KEY = "notification_plugin_cache";
     private static final String DRAWABLE = "drawable";
     private static final String DEFAULT_ICON = "defaultIcon";
@@ -134,20 +134,13 @@ public class FlutterLocalNotificationsPlugin extends BroadcastReceiver implement
     private Activity mainActivity;
     private Intent launchIntent;
 
+    public static FlutterPluginBinding flutterPluginBinding;
 
     public static void registerWith(Registrar registrar) {
         FlutterLocalNotificationsPlugin plugin = new FlutterLocalNotificationsPlugin();
         plugin.setActivity(registrar.activity());
         registrar.addNewIntentListener(plugin);
         plugin.onAttachedToEngine(registrar.context(), registrar.messenger());
-    }
-
-    @Override
-    public void onReceive(Context context, Intent intent) {
-        Log.d("RECEIVER", "ENVIANDO");
-        String payload = intent.getAction();
-        channel.invokeMethod("selectNotification", payload);
-        Log.d("RECEIVER", "ENVIADO");
     }
 
     static void rescheduleNotifications(Context context) {
@@ -247,7 +240,7 @@ public class FlutterLocalNotificationsPlugin extends BroadcastReceiver implement
 
                 if (notificationAction.backgroundAction) {
 
-                    actionIntent = new Intent(context, FlutterLocalNotificationsPlugin.class);
+                    actionIntent = new Intent(context, CustomActionReceiver.class);
 
                     actionIntent.setAction(CUSTOM_ACTION_INTENT);
 
@@ -932,6 +925,7 @@ public class FlutterLocalNotificationsPlugin extends BroadcastReceiver implement
 
     @Override
     public void onAttachedToEngine(FlutterPluginBinding binding) {
+        flutterPluginBinding = binding;
         onAttachedToEngine(binding.getApplicationContext(), binding.getBinaryMessenger());
     }
 
