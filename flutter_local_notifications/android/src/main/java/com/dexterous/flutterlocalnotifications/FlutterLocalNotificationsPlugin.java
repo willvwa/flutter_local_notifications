@@ -236,7 +236,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
                 if (notificationAction.backgroundAction) {
 
-                    actionIntent = new Intent();
+                    actionIntent = new Intent(context, CustomActionReceiver.class);
 
                     actionIntent.setAction(CUSTOM_ACTION_INTENT);
 
