@@ -236,9 +236,11 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
                 if (notificationAction.backgroundAction) {
 
-                    actionIntent = new Intent(context, CustomActionReceiver.class);
+                    actionIntent = new Intent(SELECT_NOTIFICATION);
 
-                    actionIntent.setAction(CUSTOM_ACTION_INTENT);
+//                    actionIntent = new Intent(context, CustomActionReceiver.class);
+//
+//                    actionIntent.setAction(CUSTOM_ACTION_INTENT);
 
                     if (notificationAction.payload != null) {
 
@@ -246,7 +248,8 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
                         actionIntent.putExtra(PAYLOAD, notificationAction.payload);
                     }
-                    actionPendingIntent = PendingIntent.getBroadcast(context, index, actionIntent, PendingIntent.FLAG_ONE_SHOT);
+                    actionPendingIntent = PendingIntent.getActivity(context, index, actionIntent, PendingIntent.FLAG_ONE_SHOT);
+//                    actionPendingIntent = PendingIntent.getBroadcast(context, index, actionIntent, PendingIntent.FLAG_ONE_SHOT);
 
                 } else {
 
@@ -1199,7 +1202,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     }
 
     private Boolean sendNotificationPayloadMessage(Intent intent) {
-        if (SELECT_NOTIFICATION.equals(intent.getAction())) {
+        if (SELECT_NOTIFICATION.equals(intent.getAction()) || CUSTOM_ACTION_INTENT.equals(intent.getAction())) {
             String payload = intent.getStringExtra(PAYLOAD);
             channel.invokeMethod("selectNotification", payload);
             return true;
