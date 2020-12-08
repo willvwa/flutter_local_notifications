@@ -114,7 +114,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private static final String SHOW_WEEKLY_AT_DAY_AND_TIME_METHOD = "showWeeklyAtDayAndTime";
     private static final String GET_NOTIFICATION_APP_LAUNCH_DETAILS_METHOD = "getNotificationAppLaunchDetails";
     private static final String METHOD_CHANNEL = "dexterous.com/flutter/local_notifications";
-    private static final String PAYLOAD = "payload";
+    public static final String PAYLOAD = "payload";
     private static final String INVALID_ICON_ERROR_CODE = "INVALID_ICON";
     private static final String INVALID_LARGE_ICON_ERROR_CODE = "INVALID_LARGE_ICON";
     private static final String INVALID_BIG_PICTURE_ERROR_CODE = "INVALID_BIG_PICTURE";
@@ -1213,6 +1213,12 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             return true;
         }
         return false;
+    }
+
+    public void sendPayloadMessageToFlutter(String payload) {
+        Log.d("INVOKE_METHOD", "CHAMANDO FLUTTER");
+        getInstance().channel.invokeMethod("selectNotification", payload);
+        Log.d("INVOKE_METHOD", "CHAMOU O FLUTTER");
     }
 
     private void createNotificationChannelGroup(MethodCall call, Result result) {
