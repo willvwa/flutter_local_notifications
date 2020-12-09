@@ -42,7 +42,7 @@ public class CustomActionReceiver extends BroadcastReceiver {
                     Log.d("HTTP_CALL_ACTION", httpCallActionType.getHeaders().toString());
                     Log.d("HTTP_CALL_ACTION", httpCallActionType.getBody().toString());
 
-                    String body = "{'to':'cMgO1ZsDSY-d68W3jzVTWM:APA91bFXd-bZ__gZ0sTNj7SddJFwVP6VdbxulhQ2afEK_FJt6PVEolHTkm1G993Otkuer9eo0lznMhcCZenmXyLmNa1XgxS-LqJCZXfuYwUujCZm6Xx0cx7Qb8j3ux-apGN9L-U17yCN','data':{'sound':'default','title':'test title','message':'test body','content_available':true,'priority':'high','click_action':'FLUTTER_NOTIFICATION_CLICK','values':{'type':'video-call','id':192610,'name':'teste','photo':''}}}";
+                    String body = "{\"to\":\"cMgO1ZsDSY-d68W3jzVTWM:APA91bFXd-bZ__gZ0sTNj7SddJFwVP6VdbxulhQ2afEK_FJt6PVEolHTkm1G993Otkuer9eo0lznMhcCZenmXyLmNa1XgxS-LqJCZXfuYwUujCZm6Xx0cx7Qb8j3ux-apGN9L-U17yCN\",\"data\":{\"sound\":\"default\",\"title\":\"test title\",\"message\":\"test body\",\"content_available\":true,\"priority\":\"high\",\"click_action\":\"FLUTTER_NOTIFICATION_CLICK\",\"values\":{\"type\":\"video-call\",\"id\":192610,\"name\":\"teste\",\"photo\":\"\"}}}";
 
                     RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), body);
 
