@@ -63,9 +63,11 @@ public class CustomActionReceiver extends BroadcastReceiver {
 
             Response response = okHttpClient.newCall(request).execute();
 
+            Log.d("HTTP_POST", "Code: " + response.code());
+
             String result = response.body().string();
 
-            Log.d("HTTP_POST", result);
+            if (result != null) Log.d("HTTP_POST", result);
 
             Log.d("INTENT", "HTTP CALL ACTION RECEBIDA DO INTENT");
 
