@@ -73,7 +73,11 @@ public class CustomActionReceiver extends BroadcastReceiver {
 
         } catch (Exception e) {
 
-            Log.d("ERRO", e.getMessage());
+            e.printStackTrace();
+
+            if (e.getMessage() != null) Log.d("ERRO", e.getMessage());
+
+            if (e.getCause() != null) Log.d("ERRO", e.getCause().getMessage());
         }
         Log.d("RECEIVER", "SAIU DO RECEIVER");
     }
