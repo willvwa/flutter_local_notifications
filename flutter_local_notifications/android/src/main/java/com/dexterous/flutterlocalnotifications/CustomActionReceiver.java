@@ -7,6 +7,8 @@ import android.util.Log;
 
 import androidx.annotation.Keep;
 
+import io.flutter.embedding.engine.FlutterEngine;
+import io.flutter.embedding.engine.dart.DartExecutor;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.MethodChannel;
 

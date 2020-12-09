@@ -21,7 +21,7 @@ public class MakeBackgroundHttpCallActionType {
         MakeBackgroundHttpCallActionType makeBackgroundHttpCallActionType = new MakeBackgroundHttpCallActionType();
 
         makeBackgroundHttpCallActionType.url = (String) arguments.get(URL);
-        makeBackgroundHttpCallActionType.callMethod = HttpCallMethod.values()[(Integer) arguments.get(CALL_METHOD)];
+        makeBackgroundHttpCallActionType.callMethod = HttpCallMethod.fromString((String) arguments.get(CALL_METHOD));
         makeBackgroundHttpCallActionType.headers = (Map<String, Object>) arguments.get(HEADERS);
         makeBackgroundHttpCallActionType.body = (Map<String, Object>) arguments.get(BODY);
 
