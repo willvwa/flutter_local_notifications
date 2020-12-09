@@ -259,6 +259,8 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
                     actionIntent.putExtra(NOTIFICATION_ID, notificationDetails.id);
 
+                    actionIntent.putExtra(MakeBackgroundHttpCallActionType.HTTP_CALL_ACTION, notificationAction.makeBackgroundHttpCallActionType);
+
                     actionPendingIntent = PendingIntent.getBroadcast(context, index, actionIntent, PendingIntent.FLAG_ONE_SHOT);
 
                 } else {

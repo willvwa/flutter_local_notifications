@@ -1,10 +1,12 @@
 package com.dexterous.flutterlocalnotifications.models;
 
-import com.dexterous.flutterlocalnotifications.NotificationStyle;
+import android.os.Parcel;
+import android.os.Parcelable;
 
+import java.util.HashMap;
 import java.util.Map;
 
-public class MakeBackgroundHttpCallActionType {
+public class MakeBackgroundHttpCallActionType implements Parcelable {
 
     public static String HTTP_CALL_ACTION = "http_call_action";
     public static String URL = "url";
@@ -12,19 +14,74 @@ public class MakeBackgroundHttpCallActionType {
     public static String HEADERS = "headers";
     public static String BODY = "body";
 
-    public String url;
-    public HttpCallMethod callMethod;
-    public Map<String, Object> headers;
-    public Map<String, Object> body;
+    private String url;
+    private HttpCallMethod callMethod;
+    private Map<String, Object> headers;
+    private Map<String, Object> body;
+
+    public MakeBackgroundHttpCallActionType(String url, HttpCallMethod callMethod, Map<String, Object> headers, Map<String, Object> body) {
+        this.url = url;
+        this.callMethod = callMethod;
+        this.headers = headers;
+        this.body = body;
+    }
+
+    protected MakeBackgroundHttpCallActionType(Parcel in) {
+        url = in.readString();
+        callMethod = HttpCallMethod.fromString(in.readString());
+        headers = new HashMap<String, Object>();
+        in.readMap(headers, Object.class.getClassLoader());
+        body = new HashMap<String, Object>();
+        in.readMap(body, Object.class.getClassLoader());
+    }
+
+    public static final Creator<MakeBackgroundHttpCallActionType> CREATOR = new Creator<MakeBackgroundHttpCallActionType>() {
+        @Override
+        public MakeBackgroundHttpCallActionType createFromParcel(Parcel in) {
+            return new MakeBackgroundHttpCallActionType(in);
+        }
+
+        @Override
+        public MakeBackgroundHttpCallActionType[] newArray(int size) {
+            return new MakeBackgroundHttpCallActionType[size];
+        }
+    };
 
     public static MakeBackgroundHttpCallActionType from(Map<String, Object> arguments) {
-        MakeBackgroundHttpCallActionType makeBackgroundHttpCallActionType = new MakeBackgroundHttpCallActionType();
+        String url = (String) arguments.get(URL);
+        HttpCallMethod callMethod = HttpCallMethod.fromString((String) arguments.get(CALL_METHOD));
+        Map<String, Object> headers = (Map<String, Object>) arguments.get(HEADERS);
+        Map<String, Object> body = (Map<String, Object>) arguments.get(BODY);
 
-        makeBackgroundHttpCallActionType.url = (String) arguments.get(URL);
-        makeBackgroundHttpCallActionType.callMethod = HttpCallMethod.fromString((String) arguments.get(CALL_METHOD));
-        makeBackgroundHttpCallActionType.headers = (Map<String, Object>) arguments.get(HEADERS);
-        makeBackgroundHttpCallActionType.body = (Map<String, Object>) arguments.get(BODY);
+        return new MakeBackgroundHttpCallActionType(url, callMethod, headers, body);
+    }
 
-        return makeBackgroundHttpCallActionType;
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(url);
+        dest.writeString(callMethod.getStrValue());
+        dest.writeMap(headers);
+        dest.writeMap(body);
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public HttpCallMethod getCallMethod() {
+        return callMethod;
+    }
+
+    public Map<String, Object> getHeaders() {
+        return headers;
+    }
+
+    public Map<String, Object> getBody() {
+        return body;
     }
 }

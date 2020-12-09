@@ -10,6 +10,10 @@ public enum HttpCallMethod {
         strValue = value;
     }
 
+    public String getStrValue() {
+        return strValue;
+    }
+
     public static HttpCallMethod fromString(String str) {
         for (HttpCallMethod method:
              HttpCallMethod.values()) {
