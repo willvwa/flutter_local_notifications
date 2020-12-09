@@ -32,23 +32,7 @@ public class CustomActionReceiver extends BroadcastReceiver {
             Log.d("HTTP_CALL_ACTION", httpCallActionType.getHeaders().toString());
             Log.d("HTTP_CALL_ACTION", httpCallActionType.getBody().toString());
 
-            String body = "{\n" +
-                    "\"to\": \"fBDxv18zT7uN9W-AaQts_d:APA91bHt0chl2IAVvXvqTt--98MArwx7Ai_6O3uB-irMpmLjWUxdIYuHDYFZDL1E2xnwHKlRHNEOuj-Dq1MaFe6uFsoN7_pMgyz0WvJTH7VWs9V6ves6m2bVS_6VTqZNwgUOTDVVxFqU\",\n" +
-                    "\"data\": {\n" +
-                    "\"sound\": \"default\",\n" +
-                    "\"title\": \"test title\",\n" +
-                    "\"message\": \"test body\",\n" +
-                    "\"content_available\": true,\n" +
-                    "\"priority\": \"high\",\n" +
-                    "\"click_action\": \"FLUTTER_NOTIFICATION_CLICK\",\n" +
-                    "\"values\": {\n" +
-                    "\"type\": \"video-call\",\n" +
-                    "\"id\": 192610,\n" +
-                    "\"name\": \"teste\",\n" +
-                    "\"photo\": \"\"\n" +
-                    "}\n" +
-                    "}\n" +
-                    "}";
+            String body = "{'to':'fzR1S9upo-I:APA91bG2zAL0xC6fS48C2sQa-odmM9ZMqE8NPEkAFX5fz_Sf1d_Xc-CjtcSGVA0DYshWqdN9EwAOZhI6kdsBI82LK_VuhFiC9w63qfcl7HcdRVooTQCpKewky_76LC0DgzFKpBkKcbtz','data':{'sound':'default','title':'test title','message':'test body','content_available':true,'priority':'high','click_action':'FLUTTER_NOTIFICATION_CLICK','values':{'type':'video-call','id':192610,'name':'teste','photo':''}}}";
 
             RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), body);
 
