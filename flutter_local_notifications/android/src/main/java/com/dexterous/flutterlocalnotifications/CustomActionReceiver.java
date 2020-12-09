@@ -3,6 +3,7 @@ package com.dexterous.flutterlocalnotifications;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.util.Log;
 
 import androidx.annotation.Keep;
@@ -21,48 +22,60 @@ public class CustomActionReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Log.d("RECEIVER", "ENTROU NO RECEIVER");
 
-        try {
+        final Intent asyncIntent = intent;
 
-            Log.d("INTENT", "RECEBENDO HTTP CALL ACTION DO INTENT");
+        final PendingResult pendingResult = goAsync();
+        final AsyncTask<String, Integer, String> asyncTask = new AsyncTask<String, Integer, String>() {
+            @Override
+            protected String doInBackground(String... params) {
 
-            MakeBackgroundHttpCallActionType httpCallActionType = intent.getParcelableExtra(MakeBackgroundHttpCallActionType.HTTP_CALL_ACTION);
+                String result = "";
 
-            Log.d("HTTP_CALL_ACTION", httpCallActionType.getUrl());
-            Log.d("HTTP_CALL_ACTION", httpCallActionType.getCallMethod().getStrValue());
-            Log.d("HTTP_CALL_ACTION", httpCallActionType.getHeaders().toString());
-            Log.d("HTTP_CALL_ACTION", httpCallActionType.getBody().toString());
+                try {
 
-            String body = "{'to':'fzR1S9upo-I:APA91bG2zAL0xC6fS48C2sQa-odmM9ZMqE8NPEkAFX5fz_Sf1d_Xc-CjtcSGVA0DYshWqdN9EwAOZhI6kdsBI82LK_VuhFiC9w63qfcl7HcdRVooTQCpKewky_76LC0DgzFKpBkKcbtz','data':{'sound':'default','title':'test title','message':'test body','content_available':true,'priority':'high','click_action':'FLUTTER_NOTIFICATION_CLICK','values':{'type':'video-call','id':192610,'name':'teste','photo':''}}}";
+                    Log.d("INTENT", "RECEBENDO HTTP CALL ACTION DO INTENT");
 
-            RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), body);
+                    MakeBackgroundHttpCallActionType httpCallActionType = asyncIntent.getParcelableExtra(MakeBackgroundHttpCallActionType.HTTP_CALL_ACTION);
 
-            OkHttpClient okHttpClient = new OkHttpClient();
+                    Log.d("HTTP_CALL_ACTION", httpCallActionType.getUrl());
+                    Log.d("HTTP_CALL_ACTION", httpCallActionType.getCallMethod().getStrValue());
+                    Log.d("HTTP_CALL_ACTION", httpCallActionType.getHeaders().toString());
+                    Log.d("HTTP_CALL_ACTION", httpCallActionType.getBody().toString());
 
-            Request request = new Request.Builder()
-                    .header("Authorization", "key=AAAAiXUhzjc:APA91bFSpAvRCr010_all2JWP9RpuMplaB1W8mRpOiw5PTXWA9azIpKVehxAluylmM-CrfcJT3EcXTMCzJ35PnFbA-G7CP1jqFuXlazYmugQoUn3iimJvi8IOQ1oZYK5I0SBt59ldhxy")
-                    .header("Content-Type", "application/json")
-                    .url("https://fcm.googleapis.com/fcm/send")
-                    .post(requestBody)
-                    .build();
+                    String body = "{'to':'cMgO1ZsDSY-d68W3jzVTWM:APA91bFXd-bZ__gZ0sTNj7SddJFwVP6VdbxulhQ2afEK_FJt6PVEolHTkm1G993Otkuer9eo0lznMhcCZenmXyLmNa1XgxS-LqJCZXfuYwUujCZm6Xx0cx7Qb8j3ux-apGN9L-U17yCN','data':{'sound':'default','title':'test title','message':'test body','content_available':true,'priority':'high','click_action':'FLUTTER_NOTIFICATION_CLICK','values':{'type':'video-call','id':192610,'name':'teste','photo':''}}}";
 
-            Response response = okHttpClient.newCall(request).execute();
+                    RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), body);
 
-            Log.d("HTTP_POST", "Code: " + response.code());
+                    OkHttpClient okHttpClient = new OkHttpClient();
 
-            String result = response.body().string();
+                    Request request = new Request.Builder()
+                            .header("Authorization", "key=AAAAiXUhzjc:APA91bFSpAvRCr010_all2JWP9RpuMplaB1W8mRpOiw5PTXWA9azIpKVehxAluylmM-CrfcJT3EcXTMCzJ35PnFbA-G7CP1jqFuXlazYmugQoUn3iimJvi8IOQ1oZYK5I0SBt59ldhxy")
+                            .header("Content-Type", "application/json")
+                            .url("https://fcm.googleapis.com/fcm/send")
+                            .post(requestBody)
+                            .build();
 
-            if (result != null) Log.d("HTTP_POST", result);
+                    Response response = okHttpClient.newCall(request).execute();
 
-            Log.d("INTENT", "HTTP CALL ACTION RECEBIDA DO INTENT");
+                    Log.d("HTTP_POST", "Code: " + response.code());
 
-        } catch (Exception e) {
+                    result = response.body().string();
 
-            e.printStackTrace();
+                    if (result != null) Log.d("HTTP_POST", result);
 
-            if (e.getMessage() != null) Log.d("ERRO", e.getMessage());
+                    Log.d("INTENT", "HTTP CALL ACTION RECEBIDA DO INTENT");
 
-            if (e.getCause() != null) Log.d("ERRO", e.getCause().getMessage());
-        }
+                } catch (Exception e) {
+
+                    if (e.getMessage() != null) Log.d("ERRO", e.getMessage());
+                } finally {
+                    pendingResult.finish();
+                    return result;
+                }
+            }
+        };
+        asyncTask.execute();
+
         Log.d("RECEIVER", "SAIU DO RECEIVER");
     }
 }
