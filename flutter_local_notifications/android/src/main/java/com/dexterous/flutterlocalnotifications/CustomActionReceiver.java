@@ -49,7 +49,7 @@ public class CustomActionReceiver extends BroadcastReceiver {
                     OkHttpClient okHttpClient = new OkHttpClient();
 
                     Request request = new Request.Builder()
-                            .header("Authorization", "key=AAAAiXUhzjc:APA91bFSpAvRCr010_all2JWP9RpuMplaB1W8mRpOiw5PTXWA9azIpKVehxAluylmM-CrfcJT3EcXTMCzJ35PnFbA-G7CP1jqFuXlazYmugQoUn3iimJvi8IOQ1oZYK5I0SBt59ldhxy")
+                            .header("Authorization", "teste")
                             .header("Content-Type", "application/json")
                             .url("https://fcm.googleapis.com/fcm/send")
                             .post(requestBody)
