@@ -47,9 +47,7 @@ class MakeBackgroundHttpCallActionType extends NotificationActionType {
 
   final String url;
   final HttpCallMethod method;
-
-  /// Use primitive values
-  final Map<String, Object> headers;
+  final Map<String, String> headers;
 
   /// Use primitive values
   final Map<String, Object> body;

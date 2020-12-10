@@ -1,5 +1,6 @@
 package com.dexterous.flutterlocalnotifications;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -9,11 +10,18 @@ import android.util.Log;
 import androidx.annotation.Keep;
 
 import com.dexterous.flutterlocalnotifications.models.MakeBackgroundHttpCallActionType;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.squareup.okhttp.Headers;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
+
+import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.Map;
 
 @Keep
 public class CustomActionReceiver extends BroadcastReceiver {
@@ -25,7 +33,7 @@ public class CustomActionReceiver extends BroadcastReceiver {
         final Intent asyncIntent = intent;
 
         final PendingResult pendingResult = goAsync();
-        final AsyncTask<String, Integer, String> asyncTask = new AsyncTask<String, Integer, String>() {
+        @SuppressLint("StaticFieldLeak") final AsyncTask<String, Integer, String> asyncTask = new AsyncTask<String, Integer, String>() {
             @Override
             protected String doInBackground(String... params) {
 
@@ -42,19 +50,43 @@ public class CustomActionReceiver extends BroadcastReceiver {
                     Log.d("HTTP_CALL_ACTION", httpCallActionType.getHeaders().toString());
                     Log.d("HTTP_CALL_ACTION", httpCallActionType.getBody().toString());
 
-                    String body = "{\"to\":\"cMgO1ZsDSY-d68W3jzVTWM:APA91bFXd-bZ__gZ0sTNj7SddJFwVP6VdbxulhQ2afEK_FJt6PVEolHTkm1G993Otkuer9eo0lznMhcCZenmXyLmNa1XgxS-LqJCZXfuYwUujCZm6Xx0cx7Qb8j3ux-apGN9L-U17yCN\",\"data\":{\"sound\":\"default\",\"title\":\"test title\",\"message\":\"test body\",\"content_available\":true,\"priority\":\"high\",\"click_action\":\"FLUTTER_NOTIFICATION_CLICK\",\"values\":{\"type\":\"video-call\",\"id\":192610,\"name\":\"teste\",\"photo\":\"\"}}}";
-
-                    RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), body);
-
                     OkHttpClient okHttpClient = new OkHttpClient();
+                    
+                    Request.Builder builder = new Request.Builder();
+                    builder.url(httpCallActionType.getUrl());
+                    
+                    if (httpCallActionType.getHeaders() != null && !httpCallActionType.getHeaders().isEmpty()) {
 
-                    Request request = new Request.Builder()
-                            .header("Authorization", "teste")
-                            .header("Content-Type", "application/json")
-                            .url("https://fcm.googleapis.com/fcm/send")
-                            .post(requestBody)
-                            .build();
+                        for (Map.Entry<String, String> entry : httpCallActionType.getHeaders().entrySet()) {
+                            
+                            builder.header(entry.getKey(), entry.getValue());
+                        }
+                    }
+                    
+                    if (httpCallActionType.getCallMethod() != null) {
+                        
+                        switch (httpCallActionType.getCallMethod()) {
 
+                            case GET: break;
+                            case POST: {
+                                Gson gson = new Gson();
+                                Type gsonType = new TypeToken<HashMap>(){}.getType();
+                                String gsonStringBody = gson.toJson(httpCallActionType.getBody(), gsonType);
+
+                                Log.d("HTTP_POST", "String Body: " + gsonStringBody);
+
+                                RequestBody requestBody = RequestBody.create(MediaType.parse("application/json;charset=utf-8"), gsonStringBody);
+                                builder.post(requestBody);
+                                break;
+                            }
+                            case PUT:
+                                break;
+                            case DELETE:
+                                break;
+                        }
+                    }
+                    Request request = builder.build();
+                    
                     Response response = okHttpClient.newCall(request).execute();
 
                     Log.d("HTTP_POST", "Code: " + response.code());

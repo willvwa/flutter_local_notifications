@@ -16,10 +16,10 @@ public class MakeBackgroundHttpCallActionType implements Parcelable {
 
     private String url;
     private HttpCallMethod callMethod;
-    private Map<String, Object> headers;
+    private Map<String, String> headers;
     private Map<String, Object> body;
 
-    public MakeBackgroundHttpCallActionType(String url, HttpCallMethod callMethod, Map<String, Object> headers, Map<String, Object> body) {
+    public MakeBackgroundHttpCallActionType(String url, HttpCallMethod callMethod, Map<String, String> headers, Map<String, Object> body) {
         this.url = url;
         this.callMethod = callMethod;
         this.headers = headers;
@@ -29,8 +29,8 @@ public class MakeBackgroundHttpCallActionType implements Parcelable {
     protected MakeBackgroundHttpCallActionType(Parcel in) {
         url = in.readString();
         callMethod = HttpCallMethod.fromString(in.readString());
-        headers = new HashMap<String, Object>();
-        in.readMap(headers, Object.class.getClassLoader());
+        headers = new HashMap<String, String>();
+        in.readMap(headers, String.class.getClassLoader());
         body = new HashMap<String, Object>();
         in.readMap(body, Object.class.getClassLoader());
     }
@@ -50,7 +50,7 @@ public class MakeBackgroundHttpCallActionType implements Parcelable {
     public static MakeBackgroundHttpCallActionType from(Map<String, Object> arguments) {
         String url = (String) arguments.get(URL);
         HttpCallMethod callMethod = HttpCallMethod.fromString((String) arguments.get(CALL_METHOD));
-        Map<String, Object> headers = (Map<String, Object>) arguments.get(HEADERS);
+        Map<String, String> headers = (Map<String, String>) arguments.get(HEADERS);
         Map<String, Object> body = (Map<String, Object>) arguments.get(BODY);
 
         return new MakeBackgroundHttpCallActionType(url, callMethod, headers, body);
@@ -77,7 +77,7 @@ public class MakeBackgroundHttpCallActionType implements Parcelable {
         return callMethod;
     }
 
-    public Map<String, Object> getHeaders() {
+    public Map<String, String> getHeaders() {
         return headers;
     }
 
