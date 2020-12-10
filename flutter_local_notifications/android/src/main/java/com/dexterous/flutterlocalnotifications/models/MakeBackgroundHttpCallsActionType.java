@@ -2,6 +2,7 @@ package com.dexterous.flutterlocalnotifications.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import com.dexterous.flutterlocalnotifications.HttpCallsActionReceiver;
 
@@ -42,11 +43,11 @@ public class MakeBackgroundHttpCallsActionType implements Parcelable {
         
         List<HttpCall> httpCallList = new ArrayList<>();
 
-        if (arguments.containsKey(HTTP_CALLS_ACTION)) {
+        Log.d("FROM", arguments.toString());
 
-            Map<String, Object> mapHttpCallsAction = (Map<String, Object>) arguments.get(HTTP_CALLS_ACTION);
+        if (arguments.containsKey(CALLS)) {
 
-            Map<String, Object> mapHttpCalls = (Map<String, Object>) mapHttpCallsAction.get(CALLS);
+            Map<String, Object> mapHttpCalls = (Map<String, Object>) arguments.get(CALLS);
 
             if (mapHttpCalls != null) {
 
