@@ -18,9 +18,9 @@ class NotificationAction {
         'payload_action': (actionType as OpenAppPayloadActionType).toMap(),
       };
     }
-    if (actionType is MakeBackgroundHttpCallActionType) {
+    if (actionType is MakeBackgroundHttpCallsActionType) {
       return <String, Object>{
-        'http_call_action': (actionType as MakeBackgroundHttpCallActionType).toMap(),
+        'http_calls_action': (actionType as MakeBackgroundHttpCallsActionType).toMap(),
       };
     }
     return <String, Object>{};
@@ -41,9 +41,19 @@ class OpenAppPayloadActionType extends NotificationActionType {
       };
 }
 
-/// Do a http call in background
-class MakeBackgroundHttpCallActionType extends NotificationActionType {
-  MakeBackgroundHttpCallActionType(this.url, this.method, this.headers, {this.body});
+/// List of http calls to do in background
+class MakeBackgroundHttpCallsActionType extends NotificationActionType {
+  MakeBackgroundHttpCallsActionType(this.calls);
+
+  List<HttpCall> calls;
+
+  Map<String, Object> toMap() => {
+        'calls': {for (HttpCall e in calls) calls.indexOf(e).toString(): e.toMap()}
+      };
+}
+
+class HttpCall {
+  HttpCall(this.url, this.method, this.headers, {this.body});
 
   final String url;
   final HttpCallMethod method;

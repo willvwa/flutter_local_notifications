@@ -6,9 +6,8 @@ import android.os.Parcelable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MakeBackgroundHttpCallActionType implements Parcelable {
+public class HttpCall implements Parcelable {
 
-    public static String HTTP_CALL_ACTION = "http_call_action";
     public static String URL = "url";
     public static String CALL_METHOD = "method";
     public static String HEADERS = "headers";
@@ -19,14 +18,14 @@ public class MakeBackgroundHttpCallActionType implements Parcelable {
     private Map<String, String> headers;
     private Map<String, Object> body;
 
-    public MakeBackgroundHttpCallActionType(String url, HttpCallMethod callMethod, Map<String, String> headers, Map<String, Object> body) {
+    public HttpCall(String url, HttpCallMethod callMethod, Map<String, String> headers, Map<String, Object> body) {
         this.url = url;
         this.callMethod = callMethod;
         this.headers = headers;
         this.body = body;
     }
 
-    protected MakeBackgroundHttpCallActionType(Parcel in) {
+    protected HttpCall(Parcel in) {
         url = in.readString();
         callMethod = HttpCallMethod.fromString(in.readString());
         headers = new HashMap<String, String>();
@@ -35,25 +34,26 @@ public class MakeBackgroundHttpCallActionType implements Parcelable {
         in.readMap(body, Object.class.getClassLoader());
     }
 
-    public static final Creator<MakeBackgroundHttpCallActionType> CREATOR = new Creator<MakeBackgroundHttpCallActionType>() {
+    public static final Creator<HttpCall> CREATOR = new Creator<HttpCall>() {
         @Override
-        public MakeBackgroundHttpCallActionType createFromParcel(Parcel in) {
-            return new MakeBackgroundHttpCallActionType(in);
+        public HttpCall createFromParcel(Parcel in) {
+            return new HttpCall(in);
         }
 
         @Override
-        public MakeBackgroundHttpCallActionType[] newArray(int size) {
-            return new MakeBackgroundHttpCallActionType[size];
+        public HttpCall[] newArray(int size) {
+            return new HttpCall[size];
         }
     };
 
-    public static MakeBackgroundHttpCallActionType from(Map<String, Object> arguments) {
+    public static HttpCall from(Map<String, Object> arguments) {
+
         String url = (String) arguments.get(URL);
         HttpCallMethod callMethod = HttpCallMethod.fromString((String) arguments.get(CALL_METHOD));
         Map<String, String> headers = (Map<String, String>) arguments.get(HEADERS);
         Map<String, Object> body = (Map<String, Object>) arguments.get(BODY);
 
-        return new MakeBackgroundHttpCallActionType(url, callMethod, headers, body);
+        return new HttpCall(url, callMethod, headers, body);
     }
 
     @Override

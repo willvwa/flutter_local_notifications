@@ -7,12 +7,9 @@ import android.app.NotificationChannel;
 import android.app.NotificationChannelGroup;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
@@ -25,8 +22,6 @@ import android.os.Build.VERSION_CODES;
 import android.service.notification.StatusBarNotification;
 import android.text.Html;
 import android.text.Spanned;
-import android.text.TextUtils;
-import android.util.Log;
 
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
@@ -38,7 +33,7 @@ import androidx.core.graphics.drawable.IconCompat;
 
 import com.dexterous.flutterlocalnotifications.models.DateTimeComponents;
 import com.dexterous.flutterlocalnotifications.models.IconSource;
-import com.dexterous.flutterlocalnotifications.models.MakeBackgroundHttpCallActionType;
+import com.dexterous.flutterlocalnotifications.models.MakeBackgroundHttpCallsActionType;
 import com.dexterous.flutterlocalnotifications.models.MessageDetails;
 import com.dexterous.flutterlocalnotifications.models.NotificationAction;
 import com.dexterous.flutterlocalnotifications.models.NotificationChannelAction;
@@ -249,19 +244,19 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
                         actionIntent.putExtra(PAYLOAD, notificationAction.openAppPayloadActionType.payload);
                     }
-                    actionPendingIntent = PendingIntent.getActivity(context, index, actionIntent, PendingIntent.FLAG_ONE_SHOT);
+                    actionPendingIntent = PendingIntent.getActivity(context, index, actionIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-                } else if (notificationAction.makeBackgroundHttpCallActionType != null) {
+                } else if (notificationAction.makeBackgroundHttpCallsActionType != null) {
 
-                    actionIntent = new Intent(context, CustomActionReceiver.class);
+                    actionIntent = new Intent(context, HttpCallsActionReceiver.class);
 
-                    actionIntent.setAction(MakeBackgroundHttpCallActionType.HTTP_CALL_ACTION);
+                    actionIntent.setAction(MakeBackgroundHttpCallsActionType.HTTP_CALLS_ACTION);
 
                     actionIntent.putExtra(NOTIFICATION_ID, notificationDetails.id);
 
-                    actionIntent.putExtra(MakeBackgroundHttpCallActionType.HTTP_CALL_ACTION, notificationAction.makeBackgroundHttpCallActionType);
+                    actionIntent.putExtra(MakeBackgroundHttpCallsActionType.HTTP_CALLS_ACTION, notificationAction.makeBackgroundHttpCallsActionType);
 
-                    actionPendingIntent = PendingIntent.getBroadcast(context, index, actionIntent, PendingIntent.FLAG_ONE_SHOT);
+                    actionPendingIntent = PendingIntent.getBroadcast(context, index, actionIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
                 } else {
 
