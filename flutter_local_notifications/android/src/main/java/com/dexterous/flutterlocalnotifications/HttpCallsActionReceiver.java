@@ -18,6 +18,7 @@ import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.Response;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
@@ -40,7 +41,6 @@ public class HttpCallsActionReceiver extends BroadcastReceiver {
                     doAsyncTask(httpCall);
                 }
             }
-
         }
     }
 
@@ -100,7 +100,9 @@ public class HttpCallsActionReceiver extends BroadcastReceiver {
             }
             Request request = builder.build();
 
-            okHttpClient.newCall(request).execute();
+            Response response = okHttpClient.newCall(request).execute();
+
+            Log.d("HTTP_CALL", response.code() + ", " + response.body().toString());
 
         } catch (Exception e) {
 
