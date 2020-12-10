@@ -30,15 +30,23 @@ public class HttpCallsActionReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 
+        Log.d("RECEIVER", "ENTROU NO RECEIVER");
+
         if (intent.getAction().equals(MakeBackgroundHttpCallsActionType.HTTP_CALLS_ACTION)) {
+
+            Log.d("RECEIVER", "ENTROU NO ACTION");
 
             final MakeBackgroundHttpCallsActionType httpCalls = intent.getParcelableExtra(MakeBackgroundHttpCallsActionType.HTTP_CALLS_ACTION);
 
             if (httpCalls.getCalls() != null) {
 
+                Log.d("RECEIVER", "ENTROU NA LISTA DE HTTP CALLS");
+
                 for (HttpCall httpCall : httpCalls.getCalls()) {
 
                     doAsyncTask(httpCall);
+
+                    Log.d("RECEIVER", "EXECUTOU HTTP CALL");
                 }
             }
         }
@@ -54,6 +62,8 @@ public class HttpCallsActionReceiver extends BroadcastReceiver {
             protected String doInBackground(String... params) {
 
                 makeBackgroundHttpCall(httpCall, pendingResult);
+
+                Log.d("ASYNC_TASK", "EXECUTOU ASYNC TASK");
 
                 return "";
             }
@@ -75,12 +85,16 @@ public class HttpCallsActionReceiver extends BroadcastReceiver {
                 for (Map.Entry<String, String> entry : httpCall.getHeaders().entrySet()) {
 
                     builder.header(entry.getKey(), entry.getValue());
+
+                    Log.d("HTTP_CALL", "ADICIONOU HEADER");
                 }
             }
             if (httpCall.getCallMethod() != null) {
 
                 if (httpCall.getCallMethod() == HttpCallMethod.POST
                         || httpCall.getCallMethod() == HttpCallMethod.PUT) {
+
+                    Log.d("HTTP_CALL", "CONFIGUROU REQUEST BODY");
 
                     Type gsonType = new TypeToken<HashMap>(){}.getType();
 
@@ -89,6 +103,8 @@ public class HttpCallsActionReceiver extends BroadcastReceiver {
                     RequestBody requestBody = RequestBody.create(MediaType.parse("application/json;charset=utf-8"), gsonStringBody);
 
                     if (httpCall.getCallMethod() == HttpCallMethod.POST) {
+
+                        Log.d("HTTP_CALL", "CONFIGUROU POST");
 
                         builder.post(requestBody);
 
@@ -101,6 +117,8 @@ public class HttpCallsActionReceiver extends BroadcastReceiver {
             Request request = builder.build();
 
             Response response = okHttpClient.newCall(request).execute();
+
+            Log.d("HTTP_CALL", "FEZ HTTP CALL");
 
             Log.d("HTTP_CALL", response.code() + ", " + response.body().toString());
 
