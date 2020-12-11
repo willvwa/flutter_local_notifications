@@ -1,6 +1,5 @@
 package com.dexterous.flutterlocalnotifications;
 
-import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -20,8 +19,10 @@ import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
 
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Keep
@@ -42,28 +43,33 @@ public class HttpCallsActionReceiver extends BroadcastReceiver {
 
                 Log.d("RECEIVER", "ENTROU NA LISTA DE HTTP CALLS");
 
-                for (HttpCall httpCall : httpCalls.getCalls()) {
-
-                    doAsyncTask(httpCall);
-
-                    Log.d("RECEIVER", "EXECUTOU HTTP CALL");
-                }
+                doAsyncTask(httpCalls.getCalls());
             }
         }
     }
 
-    private void doAsyncTask(final HttpCall httpCall) {
+    private void doAsyncTask(final List<HttpCall> httpCalls) {
 
         final PendingResult pendingResult = goAsync();
-
-        @SuppressLint("StaticFieldLeak") final AsyncTask<String, Integer, String> asyncTask = new AsyncTask<String, Integer, String>() {
+        final AsyncTask<String, Integer, String> asyncTask = new AsyncTask<String, Integer, String>() {
 
             @Override
             protected String doInBackground(String... params) {
 
-                makeBackgroundHttpCall(httpCall, pendingResult);
+                for (HttpCall httpCall : httpCalls) {
 
+                    try {
+
+                        makeBackgroundHttpCall(httpCall);
+
+                    } catch (Exception e) {
+
+                        Log.d("HTTP_CALL_ERROR", e.getMessage());
+                    }
+                }
                 Log.d("ASYNC_TASK", "EXECUTOU ASYNC TASK");
+
+                pendingResult.finish();
 
                 return "";
             }
@@ -71,64 +77,55 @@ public class HttpCallsActionReceiver extends BroadcastReceiver {
         asyncTask.execute();
     }
 
-    private void makeBackgroundHttpCall(final HttpCall httpCall, PendingResult pendingResult) {
-        try {
+    private void makeBackgroundHttpCall(final HttpCall httpCall) throws IOException {
 
-            OkHttpClient okHttpClient = new OkHttpClient();
+        OkHttpClient okHttpClient = new OkHttpClient();
 
-            Request.Builder builder = new Request.Builder();
+        Request.Builder builder = new Request.Builder();
 
-            builder.url(httpCall.getUrl());
+        builder.url(httpCall.getUrl());
 
-            if (httpCall.getHeaders() != null && !httpCall.getHeaders().isEmpty()) {
+        if (httpCall.getHeaders() != null && !httpCall.getHeaders().isEmpty()) {
 
-                for (Map.Entry<String, String> entry : httpCall.getHeaders().entrySet()) {
+            for (Map.Entry<String, String> entry : httpCall.getHeaders().entrySet()) {
 
-                    builder.header(entry.getKey(), entry.getValue());
+                builder.header(entry.getKey(), entry.getValue());
 
-                    Log.d("HTTP_CALL", "ADICIONOU HEADER");
-                }
+                Log.d("HTTP_CALL", "ADICIONOU HEADER");
             }
-            if (httpCall.getCallMethod() != null) {
-
-                if (httpCall.getCallMethod() == HttpCallMethod.POST
-                        || httpCall.getCallMethod() == HttpCallMethod.PUT) {
-
-                    Log.d("HTTP_CALL", "CONFIGUROU REQUEST BODY");
-
-                    Type gsonType = new TypeToken<HashMap>(){}.getType();
-
-                    String gsonStringBody = new Gson().toJson(httpCall.getBody(), gsonType);
-
-                    RequestBody requestBody = RequestBody.create(MediaType.parse("application/json;charset=utf-8"), gsonStringBody);
-
-                    if (httpCall.getCallMethod() == HttpCallMethod.POST) {
-
-                        Log.d("HTTP_CALL", "CONFIGUROU POST");
-
-                        builder.post(requestBody);
-
-                    } else {
-
-                        builder.put(requestBody);
-                    }
-                }
-            }
-            Request request = builder.build();
-
-            Response response = okHttpClient.newCall(request).execute();
-
-            Log.d("HTTP_CALL", "FEZ HTTP CALL");
-
-            Log.d("HTTP_CALL", response.code() + ", " + response.body().toString());
-
-        } catch (Exception e) {
-
-            Log.d("ERRO", e.getMessage());
-
-        } finally {
-
-            pendingResult.finish();
         }
+        if (httpCall.getCallMethod() != null) {
+
+            if (httpCall.getCallMethod() == HttpCallMethod.POST
+                    || httpCall.getCallMethod() == HttpCallMethod.PUT) {
+
+                Log.d("HTTP_CALL", "CONFIGUROU REQUEST BODY");
+
+                Type gsonType = new TypeToken<HashMap>() {
+                }.getType();
+
+                String gsonStringBody = new Gson().toJson(httpCall.getBody(), gsonType);
+
+                RequestBody requestBody = RequestBody.create(MediaType.parse("application/json;charset=utf-8"), gsonStringBody);
+
+                if (httpCall.getCallMethod() == HttpCallMethod.POST) {
+
+                    Log.d("HTTP_CALL", "CONFIGUROU POST");
+
+                    builder.post(requestBody);
+
+                } else {
+
+                    builder.put(requestBody);
+                }
+            }
+        }
+        Request request = builder.build();
+
+        Response response = okHttpClient.newCall(request).execute();
+
+        Log.d("HTTP_CALL", "FEZ HTTP CALL");
+
+        Log.d("HTTP_CALL", response.code() + ", " + response.body().toString());
     }
 }
