@@ -79,8 +79,6 @@ public class HttpCallsActionReceiver extends BroadcastReceiver {
 
     private void makeBackgroundHttpCall(final HttpCall httpCall) throws IOException {
 
-        Response response;
-
         try {
 
             OkHttpClient okHttpClient = new OkHttpClient();
@@ -124,22 +122,17 @@ public class HttpCallsActionReceiver extends BroadcastReceiver {
             }
             Request request = builder.build();
 
-            response = okHttpClient.newCall(request).execute();
+            Response response = okHttpClient.newCall(request).execute();
 
             Log.d("HTTP_CALL", response.code() + ", " + response.body().toString());
 
             Log.d("HTTP_CALL", "BODY: " + response.body().toString());
 
+            response.body().close();
+
         } catch (Exception e) {
 
             throw e;
-
-        } finally {
-
-            if (response != null) {
-
-                response.body().close();
-            }
         }
     }
 }
