@@ -79,53 +79,67 @@ public class HttpCallsActionReceiver extends BroadcastReceiver {
 
     private void makeBackgroundHttpCall(final HttpCall httpCall) throws IOException {
 
-        OkHttpClient okHttpClient = new OkHttpClient();
+        Response response;
 
-        Request.Builder builder = new Request.Builder();
+        try {
 
-        builder.url(httpCall.getUrl());
+            OkHttpClient okHttpClient = new OkHttpClient();
 
-        if (httpCall.getHeaders() != null && !httpCall.getHeaders().isEmpty()) {
+            Request.Builder builder = new Request.Builder();
 
-            for (Map.Entry<String, String> entry : httpCall.getHeaders().entrySet()) {
+            builder.url(httpCall.getUrl());
 
-                builder.header(entry.getKey(), entry.getValue());
+            if (httpCall.getHeaders() != null && !httpCall.getHeaders().isEmpty()) {
 
-                Log.d("HTTP_CALL", "ADICIONOU HEADER");
-            }
-        }
-        if (httpCall.getCallMethod() != null) {
+                for (Map.Entry<String, String> entry : httpCall.getHeaders().entrySet()) {
 
-            if (httpCall.getCallMethod() == HttpCallMethod.POST
-                    || httpCall.getCallMethod() == HttpCallMethod.PUT) {
+                    builder.header(entry.getKey(), entry.getValue());
 
-                Log.d("HTTP_CALL", "CONFIGUROU REQUEST BODY");
-
-                Type gsonType = new TypeToken<HashMap>() {
-                }.getType();
-
-                String gsonStringBody = new Gson().toJson(httpCall.getBody(), gsonType);
-
-                RequestBody requestBody = RequestBody.create(MediaType.parse("application/json;charset=utf-8"), gsonStringBody);
-
-                if (httpCall.getCallMethod() == HttpCallMethod.POST) {
-
-                    Log.d("HTTP_CALL", "CONFIGUROU POST");
-
-                    builder.post(requestBody);
-
-                } else {
-
-                    builder.put(requestBody);
+                    Log.d("HTTP_CALL", "HEADER: " + entry.getKey() + ": " + entry.getValue());
                 }
             }
+            if (httpCall.getCallMethod() != null) {
+
+                if (httpCall.getCallMethod() == HttpCallMethod.POST
+                        || httpCall.getCallMethod() == HttpCallMethod.PUT) {
+
+                    Type gsonType = new TypeToken<HashMap>() {
+                    }.getType();
+
+                    String gsonStringBody = new Gson().toJson(httpCall.getBody(), gsonType);
+
+                    RequestBody requestBody = RequestBody.create(MediaType.parse("application/json;charset=utf-8"), gsonStringBody);
+
+                    if (httpCall.getCallMethod() == HttpCallMethod.POST) {
+
+                        Log.d("HTTP_CALL", "HTTP METHOD: POST");
+
+                        builder.post(requestBody);
+
+                    } else {
+
+                        builder.put(requestBody);
+                    }
+                }
+            }
+            Request request = builder.build();
+
+            response = okHttpClient.newCall(request).execute();
+
+            Log.d("HTTP_CALL", response.code() + ", " + response.body().toString());
+
+            Log.d("HTTP_CALL", "BODY: " + response.body().toString());
+
+        } catch (Exception e) {
+
+            throw e;
+
+        } finally {
+
+            if (response != null) {
+
+                response.body().close();
+            }
         }
-        Request request = builder.build();
-
-        Response response = okHttpClient.newCall(request).execute();
-
-        Log.d("HTTP_CALL", "FEZ HTTP CALL");
-
-        Log.d("HTTP_CALL", response.code() + ", " + response.body().toString());
     }
 }
