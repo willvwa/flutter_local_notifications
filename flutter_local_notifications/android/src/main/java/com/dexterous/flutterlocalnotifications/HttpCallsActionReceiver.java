@@ -11,6 +11,7 @@ import androidx.annotation.Keep;
 import com.dexterous.flutterlocalnotifications.models.HttpCall;
 import com.dexterous.flutterlocalnotifications.models.HttpCallMethod;
 import com.dexterous.flutterlocalnotifications.models.MakeBackgroundHttpCallsActionType;
+import com.dexterous.flutterlocalnotifications.models.NotificationAction;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.squareup.okhttp.MediaType;
@@ -36,8 +37,17 @@ public class HttpCallsActionReceiver extends BroadcastReceiver {
         if (intent.getAction().equals(MakeBackgroundHttpCallsActionType.HTTP_CALLS_ACTION)) {
 
             Log.d("RECEIVER", "ENTROU NO ACTION");
-
+            
             final MakeBackgroundHttpCallsActionType httpCalls = intent.getParcelableExtra(MakeBackgroundHttpCallsActionType.HTTP_CALLS_ACTION);
+
+            Boolean closeNotificationOnClick = intent.getBooleanExtra(NotificationAction.CLOSE_NOTIFICATION_ON_CLICK, false);
+
+            Integer notificationId = intent.getIntExtra(FlutterLocalNotificationsPlugin.NOTIFICATION_ID, 0);
+
+            if (closeNotificationOnClick) {
+
+                FlutterLocalNotificationsPlugin.cancelNotification(context, notificationId);
+            }
 
             if (httpCalls.getCalls() != null) {
 

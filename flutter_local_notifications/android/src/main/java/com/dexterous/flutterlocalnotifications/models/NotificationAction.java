@@ -7,9 +7,11 @@ import java.util.Map;
 @Keep
 public class NotificationAction {
 
-    private static final String LABEL = "label";
+    public static final String LABEL = "label";
+    public static final String CLOSE_NOTIFICATION_ON_CLICK = "close_notification_on_click";
 
     public String label;
+    public Boolean closeNotificationOnClick;
     public MakeBackgroundHttpCallsActionType makeBackgroundHttpCallsActionType;
     public OpenAppPayloadActionType openAppPayloadActionType;
 
@@ -17,6 +19,7 @@ public class NotificationAction {
         NotificationAction notificationAction = new NotificationAction();
 
         notificationAction.label = (String) arguments.get(LABEL);
+        notificationAction.closeNotificationOnClick = (Boolean) arguments.get(CLOSE_NOTIFICATION_ON_CLICK); 
 
         String makeHttpCallKey = MakeBackgroundHttpCallsActionType.HTTP_CALLS_ACTION;
         String openAppPayloadKey = OpenAppPayloadActionType.PAYLOAD_ACTION;

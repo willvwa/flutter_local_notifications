@@ -121,7 +121,10 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private static final String NOTIFICATION_LAUNCHED_APP = "notificationLaunchedApp";
     private static final String INVALID_DRAWABLE_RESOURCE_ERROR_MESSAGE = "The resource %s could not be found. Please make sure it has been added as a drawable resource to your Android head project.";
     private static final String INVALID_RAW_RESOURCE_ERROR_MESSAGE = "The resource %s could not be found. Please make sure it has been added as a raw resource to your Android head project.";
-    private static final String NOTIFICATION_ID = "notificationId";
+
+    public static final String NOTIFICATION_ID = "notificationId";
+    private static final String INTENT_FROM_ACTION = "intentFromAction";
+
     static String NOTIFICATION_DETAILS = "notificationDetails";
     static Gson gson;
 
@@ -238,6 +241,10 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
                     actionIntent.setAction(SELECT_NOTIFICATION);
 
+                    actionIntent.putExtra(INTENT_FROM_ACTION, true);
+
+                    actionIntent.putExtra(NotificationAction.CLOSE_NOTIFICATION_ON_CLICK, notificationAction.closeNotificationOnClick);
+
                     actionIntent.putExtra(NOTIFICATION_ID, notificationDetails.id);
 
                     if (notificationAction.openAppPayloadActionType.payload != null) {
@@ -251,6 +258,8 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                     actionIntent = new Intent(context, HttpCallsActionReceiver.class);
 
                     actionIntent.setAction(MakeBackgroundHttpCallsActionType.HTTP_CALLS_ACTION);
+
+                    actionIntent.putExtra(NotificationAction.CLOSE_NOTIFICATION_ON_CLICK, notificationAction.closeNotificationOnClick);
 
                     actionIntent.putExtra(NOTIFICATION_ID, notificationDetails.id);
 
@@ -1168,6 +1177,16 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         removeNotificationFromCache(applicationContext, id);
     }
 
+    public static void cancelNotification(Context context, Integer notificationId) {
+        Intent intent = new Intent(context, ScheduledNotificationReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, notificationId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        AlarmManager alarmManager = getAlarmManager(context);
+        alarmManager.cancel(pendingIntent);
+        NotificationManagerCompat notificationManager = getNotificationManager(context);
+        notificationManager.cancel(notificationId);
+        removeNotificationFromCache(context, notificationId);
+    }
+
     private void cancelAllNotifications(Result result) {
         NotificationManagerCompat notificationManager = getNotificationManager(applicationContext);
         notificationManager.cancelAll();
@@ -1199,9 +1218,22 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     }
 
     private Boolean sendNotificationPayloadMessage(Intent intent) {
+
         if (SELECT_NOTIFICATION.equals(intent.getAction())) {
+
+            if (intent.getBooleanExtra(INTENT_FROM_ACTION, false)) {
+
+                if (intent.getBooleanExtra(NotificationAction.CLOSE_NOTIFICATION_ON_CLICK, false)) {
+
+                    Integer notificationId = intent.getIntExtra(NOTIFICATION_ID, -1);
+
+                    if (notificationId >= 0) this.cancelNotification(notificationId);
+                }
+            }
             String payload = intent.getStringExtra(PAYLOAD);
+
             channel.invokeMethod("selectNotification", payload);
+
             return true;
         }
         return false;

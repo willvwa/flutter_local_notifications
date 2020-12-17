@@ -2,14 +2,17 @@ import 'package:flutter/foundation.dart';
 
 /// Android Notification Action
 class NotificationAction {
-  NotificationAction(this.label, this.actionType);
+  NotificationAction(this.label, this.actionType, {this.closeNotificationOnClick = false});
 
   final String label;
+
+  final bool closeNotificationOnClick;
 
   final NotificationActionType actionType;
 
   Map<String, Object> toMap() => {
         'label': label,
+        'close_notification_on_click': closeNotificationOnClick,
       }..addAll(_convertActionTypeToMap());
 
   Map<String, Object> _convertActionTypeToMap() {
